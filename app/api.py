@@ -8,9 +8,21 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from pydantic import BaseModel
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+
+
+def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
+    """自定义限流错误响应"""
+    return JSONResponse(
+        status_code=429,
+        content={
+            "answer": "You've sent too many requests. Please wait a minute before trying again. (Limit: 10 requests per minute)",
+            "sources": [],
+            "prompt_name": "error",
+        },
+    )
 
 from app.rag_core import answer_question, available_prompts, INDEX_PATH
 
@@ -48,7 +60,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(title="CS104 QA RAG")
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 
 # 静态网页
 app.mount("/static", StaticFiles(directory="web/static"), name="static")
