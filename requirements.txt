@@ -1,0 +1,15 @@
+# Core framework
+fastapi
+uvicorn[standard]
+
+# LlamaIndex RAG
+llama-index
+llama-index-llms-openai
+llama-index-embeddings-openai
+llama-index-readers-web
+
+# Production dependencies
+slowapi          # Rate limiting
+loguru           # Structured logging
+sentry-sdk[fastapi]  # Error tracking
+python-dotenv    # Environment variable loading
