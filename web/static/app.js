@@ -252,11 +252,14 @@ async function sendQuestion(question) {
     }),
   });
 
+  const data = await response.json();
+
+  // Even for error responses (429, 500), return the data so we can show the server's message
   if (!response.ok) {
-    throw new Error(`HTTP error: ${response.status}`);
+    return { answer: data.answer || `Error: ${response.status}`, sources: [] };
   }
 
-  return response.json();
+  return data;
 }
 
 // ========================================
