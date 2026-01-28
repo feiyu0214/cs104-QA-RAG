@@ -62,7 +62,7 @@ def get_query_engine(similarity_top_k: int = 10):
     storage_context = StorageContext.from_defaults(persist_dir=INDEX_PATH)
     index = load_index_from_storage(storage_context)
 
-    llm = OpenAI(model=LLM_MODEL, temperature=0)
+    llm = OpenAI(model=LLM_MODEL, temperature=0, seed=42)
     embed_model = OpenAIEmbedding(model=EMBED_MODEL)
 
     # 用 index.as_query_engine 走最简单的 RAG：retrieve + synthesize
